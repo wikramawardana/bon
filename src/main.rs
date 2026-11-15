@@ -17,7 +17,7 @@ use crate::mcp::McpClient;
 async fn health_check() -> axum::Json<serde_json::Value> {
     axum::Json(serde_json::json!({
         "status": "healthy",
-        "service": "family-bot",
+        "service": "bon",
         "version": env!("CARGO_PKG_VERSION")
     }))
 }
@@ -28,12 +28,12 @@ async fn main() -> anyhow::Result<()> {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "info,family_bot=debug".into()),
+                .unwrap_or_else(|_| "info,bon=debug".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    info!("💰 Starting Hermes Family Expense Bot (Rust)...");
+    info!("🧾 Starting Bon - Catat Pengeluaran & Bank Sync Bot (Rust)...");
 
     // 1. Load configuration
     let config = Config::from_env()?;
@@ -60,11 +60,11 @@ async fn main() -> anyhow::Result<()> {
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 info!(
-                    "💰 Family Bot logged in as '{}' across {} guilds",
+                    "🧾 Bon logged in as '{}' across {} guilds",
                     _ready.user.name,
                     _ready.guilds.len()
                 );
-                ctx.set_activity(Some(serenity::ActivityData::watching("over Family Finances 💰")));
+                ctx.set_activity(Some(serenity::ActivityData::watching("over Bon & Pengeluaran 🧾")));
 
                 for guild in &_ready.guilds {
                     let _ = poise::builtins::register_in_guild(ctx, &framework.options().commands, guild.id).await;

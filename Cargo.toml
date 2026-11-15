@@ -1,9 +1,9 @@
 [package]
-name = "family-bot"
+name = "bon"
 version = "0.1.0"
 edition = "2021"
 authors = ["Wikramawardana"]
-description = "Hermes Family Expense & Finance Assistant Bot in Rust"
+description = "Bon - Catat Pengeluaran & Bank Sync Bot in Rust 🧾"
 
 [dependencies]
 tokio = { version = "1.40", features = ["full"] }

@@ -189,7 +189,7 @@ pub async fn summary(
                 }
             }
 
-            lines.push("\n`Hermes Family Bot 🦀`".to_string());
+            lines.push("\n`Bon 🧾`".to_string());
             let report = lines.join("\n");
             send_chunked_reply(ctx, &report).await?;
         }
@@ -263,7 +263,7 @@ pub async fn transaksi(
                 }
             }
 
-            lines.push("\n`Hermes Family Bot 🦀`".to_string());
+            lines.push("\n`Bon 🧾`".to_string());
             let report = lines.join("\n");
             send_chunked_reply(ctx, &report).await?;
         }
@@ -312,7 +312,7 @@ pub async fn status(ctx: Context<'_>) -> Result<(), Error> {
          - **Available Sheets Tabs:** `{}`\n\
          - **Expense Log Channel:** <#{}>\n\
          - **Bank Sync Feed Channel:** <#{}>\n\n\
-         `Hermes Family Bot 🦀`",
+         `Bon 🧾`",
         ctx.data().config.llm_model,
         ctx.data().config.family_mcp_url,
         mcp_status_str,
@@ -330,6 +330,6 @@ pub async fn status(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn clear(ctx: Context<'_>) -> Result<(), Error> {
     let channel_id = ctx.channel_id().get();
     ctx.data().agent.memory().clear(channel_id).await;
-    ctx.say("🧹 Riwayat percakapan keuangan di channel ini telah dibersihkan!\n\n`Hermes Family Bot 🦀`").await?;
+    ctx.say("🧹 Riwayat percakapan pengeluaran di channel ini telah dibersihkan!\n\n`Bon 🧾`").await?;
     Ok(())
 }

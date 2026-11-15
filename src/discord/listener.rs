@@ -11,7 +11,7 @@ pub async fn event_handler(
     match event {
         serenity::FullEvent::Ready { data_about_bot, .. } => {
             info!(
-                "💰 Hermes Family Bot is ready as '{}' (ID: {})",
+                "🧾 Bon is ready as '{}' (ID: {})",
                 data_about_bot.user.name, data_about_bot.user.id
             );
         }
@@ -44,14 +44,14 @@ pub async fn event_handler(
                     new_message
                         .reply(
                             &ctx.http,
-                            "Hai! Ada yang bisa saya bantu terkait pengeluaran keluarga atau kartu kredit? 💰",
+                            "Halo! Ada bon atau pengeluaran yang mau dicatat hari ini? 🧾",
                         )
                         .await?;
                     return Ok(());
                 }
 
                 info!(
-                    "💬 [FamilyExpenseBot] Processing query from {} in #{}: '{}'",
+                    "💬 [Bon] Processing query from {} in #{}: '{}'",
                     new_message.author.name,
                     new_message.channel_id,
                     clean_content

@@ -8,13 +8,13 @@ COPY src ./src
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/src/target \
     cargo build --release --locked \
-    && install -m 0755 target/release/family-bot /family-bot
+    && install -m 0755 target/release/bon /bon
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=build /family-bot /usr/local/bin/family-bot
+COPY --from=build /bon /usr/local/bin/bon
 USER 10001:10001
-ENV RUST_LOG="info,family_bot=debug"
+ENV RUST_LOG="info,bon=debug"
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/family-bot"]
+ENTRYPOINT ["/usr/local/bin/bon"]

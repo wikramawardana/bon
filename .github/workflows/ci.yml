@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE: ghcr.io/wikramawardana/family-bot
+  IMAGE: ghcr.io/wikramawardana/bon
 
 jobs:
   test:
@@ -31,7 +31,7 @@ jobs:
         run: cargo check --locked
 
   build-image:
-    name: Build & push family-bot image
+    name: Build & push bon image
     needs: test
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
