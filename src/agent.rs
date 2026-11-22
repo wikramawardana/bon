@@ -173,9 +173,17 @@ impl FamilyExpenseAgent {
                                 "enum": ["Wikra", "Dapur Bu Wikra", "Mbak Intan", "Vincent", "Kepin", "Teteh"],
                                 "description": "Filter siapa yang membayar."
                             },
+                            "category": {
+                                "type": "string",
+                                "description": "Filter kategori pengeluaran spesifik."
+                            },
+                            "note_contains": {
+                                "type": "string",
+                                "description": "Kata kunci pencarian pada kolom catatan/keterangan/notes transaksi (contoh: 'Shopping Cost 16-20 Nov', 'reimburse', 'operasional', dsb). Gunakan ini jika user menyebut catatan atau periode mingguan!"
+                            },
                             "item_contains": {
                                 "type": "string",
-                                "description": "Kata kunci pencarian nama transaksi atau merchant (case-insensitive)."
+                                "description": "Kata kunci pencarian nama transaksi atau merchant/toko (contoh: 'Shopee', 'Diamond Supermarket', 'Starbucks')."
                             },
                             "min_amount": {
                                 "type": "integer",
@@ -184,6 +192,14 @@ impl FamilyExpenseAgent {
                             "max_amount": {
                                 "type": "integer",
                                 "description": "Nominal maksimum transaksi (IDR)."
+                            },
+                            "date_from": {
+                                "type": "string",
+                                "description": "Filter tanggal mulai (format YYYY-MM-DD)."
+                            },
+                            "date_to": {
+                                "type": "string",
+                                "description": "Filter tanggal akhir (format YYYY-MM-DD)."
                             }
                         },
                         "required": []
@@ -251,11 +267,15 @@ impl FamilyExpenseAgent {
                 let card = args.get("card").and_then(|v| v.as_str());
                 let status = args.get("status").and_then(|v| v.as_str());
                 let paid_by = args.get("paid_by").and_then(|v| v.as_str());
+                let category = args.get("category").and_then(|v| v.as_str());
+                let note = args.get("note_contains").and_then(|v| v.as_str());
+                let item = args.get("item_contains").and_then(|v| v.as_str());
                 let min_amount = args.get("min_amount").and_then(|v| v.as_u64());
                 let max_amount = args.get("max_amount").and_then(|v| v.as_u64());
-                let item = args.get("item_contains").and_then(|v| v.as_str());
+                let date_from = args.get("date_from").and_then(|v| v.as_str());
+                let date_to = args.get("date_to").and_then(|v| v.as_str());
 
-                match self.mcp.list_transactions(month, card, status, paid_by, min_amount, max_amount, item).await {
+                match self.mcp.list_transactions(month, card, status, paid_by, category, note, item, min_amount, max_amount, date_from, date_to).await {
                     Ok(val) => val,
                     Err(e) => json!({ "error": e.to_string() }),
                 }
@@ -287,11 +307,18 @@ Tugas utamamu:
 3. Membantu mencari transaksi/struk belanja (misal: "cek transaksi starbucks", "pengeluaran bca di atas 500rb", "mana transaksi yang pending?").
 4. Mengupdate status pembayaran (PAID, PENDING, UNPAID) atau kategori pengeluaran jika diminta.
 
-Pedoman Gaya Bahasa:
+Pedoman Gaya Bahasa & Ketelitian Data:
 - Selalu gunakan bahasa Indonesia yang ramah, ringkas, santai tapi terstruktur dan akurat. Panggil dirimu "Bon" atau "Si Bon 🧾".
 - Selalu format nominal uang dalam format Rupiah yang mudah dibaca (misal: Rp 1.500.000).
 - Sajikan rekap atau data transaksi dalam format list atau tabel Markdown yang rapi dengan emoji yang relevan.
-- Jika ada banyak transaksi, tampilkan maksimal 10 transaksi terpenting/terbaru dan sebutkan total keseluruhan."#;
+- PENTING TENTANG FILTER PENCARIAN:
+  * Jika user menyebutkan catatan/keperluan/periode mingguan (contoh: 'Shopping Cost 16-20 Nov', 'reimburse', 'operasional'), WAJIB gunakan parameter `note_contains`.
+  * Jika user menyebutkan nama toko / merchant (contoh: 'Shopee', 'Diamond Supermarket', 'Starbucks'), gunakan `item_contains`.
+- PENTING TENTANG ANGKA & PERHITUNGAN MATEMATIKA (ANTI-HALUSINASI):
+  * Tool `list_transactions` dan `summarize_transactions` SUDAH menghitung angka total dan subtotal secara eksak dan akurat di level server (lihat field `total`, `count`, dan `by_card` di hasil JSON tool).
+  * WAJIB gunakan angka dari field `total`, `count`, dan `by_card` yang disediakan oleh server response!
+  * JANGAN PERNAH menghitung manual, menjumlahkan sendiri dengan mental math, atau menebak total nominal jika server sudah menyediakan angka pasti.
+- Jika ada banyak transaksi (lebih dari 15), tampilkan ringkasan per kartu dari `by_card` dan daftarkan transaksi terpenting secara ringkas."#;
 
         let mut messages = vec![ChatMessage {
             role: "system".into(),

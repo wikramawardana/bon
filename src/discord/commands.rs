@@ -208,6 +208,7 @@ pub async fn transaksi(
     #[description = "Kartu spesifik"] card: Option<CardChoice>,
     #[description = "Status pembayaran"] status: Option<StatusChoice>,
     #[description = "Penanggung jawab"] paid_by: Option<PaidByChoice>,
+    #[description = "Kata kunci catatan/notes (contoh: 'Shopping Cost 16-20 Nov')"] note: Option<String>,
     #[description = "Kata kunci nama transaksi/merchant"] keyword: Option<String>,
     #[description = "Nominal minimum (IDR)"] min_amount: Option<u64>,
 ) -> Result<(), Error> {
@@ -218,9 +219,13 @@ pub async fn transaksi(
         card.as_ref().map(|x| x.as_str()),
         status.as_ref().map(|x| x.as_str()),
         paid_by.as_ref().map(|x| x.as_str()),
+        None,
+        note.as_deref(),
+        keyword.as_deref(),
         min_amount,
         None,
-        keyword.as_deref(),
+        None,
+        None,
     ).await {
         Ok(val) => {
             let count = val["count"].as_u64().unwrap_or(0);

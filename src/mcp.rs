@@ -174,9 +174,13 @@ impl McpClient {
         card: Option<&str>,
         status: Option<&str>,
         paid_by: Option<&str>,
+        category: Option<&str>,
+        note_contains: Option<&str>,
+        item_contains: Option<&str>,
         min_amount: Option<u64>,
         max_amount: Option<u64>,
-        item_contains: Option<&str>,
+        date_from: Option<&str>,
+        date_to: Option<&str>,
     ) -> Result<Value, anyhow::Error> {
         let mut args = serde_json::Map::new();
         if let Some(m) = month {
@@ -191,14 +195,26 @@ impl McpClient {
         if let Some(p) = paid_by {
             args.insert("paid_by".to_string(), Value::String(p.to_string()));
         }
+        if let Some(cat) = category {
+            args.insert("category".to_string(), Value::String(cat.to_string()));
+        }
+        if let Some(note) = note_contains {
+            args.insert("note_contains".to_string(), Value::String(note.to_string()));
+        }
+        if let Some(item) = item_contains {
+            args.insert("item_contains".to_string(), Value::String(item.to_string()));
+        }
         if let Some(min) = min_amount {
             args.insert("min_amount".to_string(), Value::Number(min.into()));
         }
         if let Some(max) = max_amount {
             args.insert("max_amount".to_string(), Value::Number(max.into()));
         }
-        if let Some(item) = item_contains {
-            args.insert("item_contains".to_string(), Value::String(item.to_string()));
+        if let Some(df) = date_from {
+            args.insert("date_from".to_string(), Value::String(df.to_string()));
+        }
+        if let Some(dt) = date_to {
+            args.insert("date_to".to_string(), Value::String(dt.to_string()));
         }
         self.call_tool("list_transactions", Value::Object(args)).await
     }
